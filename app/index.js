@@ -1,28 +1,20 @@
+"use strict";
 
 var d3 = require('d3');
 require('./main.css');
 var RationalBezierCurve = require('../lib/rational-bezier-curve');
 
-var svg = d3.select('#example').append('svg').attr({
-  viewBox: "-40 -30 100 100",
-  width: 512,
-  height: 512
-});
-
-
-
+var svg = d3.select('#example').append('svg');
 var circleLayer = svg.append('g').attr('class', 'circle-layer');
 var controlLayer = svg.append('g').attr('class', 'control-layer');
 var curveLayer = svg.append('g').attr('class', 'curve-layer');
-
-
 
 getJSON ( "data.json", function ( err, json, out ) {
     if ( err )
       console.log("ERROR:", err);
     else {
-      console.log(json);
-      var controlPoints = json;
+      svg.attr(json["svgAttr"]);
+      var controlPoints = json["controlPoints"];
       drawControlPoints(controlPoints);
       drawRationalBezierCurve(controlPoints);
     }
@@ -42,7 +34,6 @@ function getJSON ( path, callback ) {
       if ( req.status === 200 || req.status === 0 ) {
         var json;
         try {
-          console.log("DATA: " + req.responseText)
           json = JSON.parse( req.responseText );;
         } catch(e) {
           callback ( e, null );
@@ -60,8 +51,6 @@ function getJSON ( path, callback ) {
 }
 
 function drawControlPoints(controlPoints) {
-  console.log('controlPoints', JSON.stringify(controlPoints));
-
   controlLayer.selectAll('circle.control').data(controlPoints)
     .enter().append('circle')
     .attr({
@@ -88,7 +77,6 @@ function drawRationalBezierCurve(controlPoints) {
     t = i / n;
     curvePoints.push(curve.getPointAt(t));
   }
-  console.log('curvePoints', curvePoints);
   curveLayer.selectAll('circle.curve').data(curvePoints)
     .enter().append('circle')
     .attr({
