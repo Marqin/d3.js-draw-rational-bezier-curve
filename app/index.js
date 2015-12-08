@@ -9,27 +9,13 @@ var svg = d3.select('#example').append('svg').attr({
   height: 512
 });
 
-var cx = 200;
-var cy = 200;
-var r = 100;
-var circle = { cx: cx, cy: cy, r: r }
-var circles = [circle];
+
 
 var circleLayer = svg.append('g').attr('class', 'circle-layer');
 var controlLayer = svg.append('g').attr('class', 'control-layer');
 var curveLayer = svg.append('g').attr('class', 'curve-layer');
 
-circleLayer.selectAll('circle.reference').data(circles)
-  .enter().append('circle')
-  .attr({
-    'class': 'reference',
-    cx: function(d) { return d.cx; },
-    cy: function(d) { return d.cy; },
-    r: function(d) { return d.r; }
-  });
 
-var alpha = Math.PI / 3;
-var outerR = r / Math.cos(alpha);
 
 getJSON ( "data.json", function ( err, json, out ) {
     if ( err )
@@ -82,7 +68,7 @@ function drawControlPoints(controlPoints) {
       'class': 'control',
       cx: function(d) { return d.cx; },
       cy: function(d) { return d.cy; },
-      r: 4
+      r: 2
     });
 }
 
