@@ -3,11 +3,11 @@ var d3 = require('d3');
 require('./main.css');
 var RationalBezierCurve = require('../lib/rational-bezier-curve');
 
-var svg = d3.select('#example').append('svg')
-  .attr({
-    width: 400,
-    height: 500
-  });
+var svg = d3.select('#example').append('svg').attr({
+  viewBox: "-40 -30 100 100",
+  width: 512,
+  height: 512
+});
 
 var cx = 200;
 var cy = 200;
@@ -28,25 +28,53 @@ circleLayer.selectAll('circle.reference').data(circles)
     r: function(d) { return d.r; }
   });
 
-var n = 3;
-var alpha = Math.PI / n;
+var alpha = Math.PI / 3;
 var outerR = r / Math.cos(alpha);
 
-var controlPoints = [];
-function drawControlPoints() {
-  for (var i = 0; i <= n; i++) {
-    controlPoints.push({
-      cx: cx + r * Math.sin(2 * i * alpha),
-      cy: cy - r * Math.cos(2 * i * alpha),
-      w: 1
-    });
-    controlPoints.push({
-      cx: cx + outerR * Math.sin((2 * i + 1) * alpha),
-      cy: cy - outerR * Math.cos((2 * i + 1) * alpha),
-      w: 0.5 //Math.cos(alpha / 2)
-    });
-  }
-  console.log('controlPoints', controlPoints);
+getJSON ( "data.json", function ( err, json, out ) {
+    if ( err )
+      console.log("ERROR:", err);
+    else {
+      console.log(json);
+      var controlPoints = json;
+      drawControlPoints(controlPoints);
+      drawRationalBezierCurve(controlPoints);
+    }
+});
+
+// functions:
+
+function getJSON ( path, callback ) {
+
+  callback = ( typeof callback === 'function' ) ? callback : function() {};
+
+  var req = new XMLHttpRequest();
+
+  req.onreadystatechange = function () {
+    if ( req.readyState === XMLHttpRequest.DONE ) {
+      // req.status === 0 for Local file @ Chrome
+      if ( req.status === 200 || req.status === 0 ) {
+        var json;
+        try {
+          console.log("DATA: " + req.responseText)
+          json = JSON.parse( req.responseText );;
+        } catch(e) {
+          callback ( e, null );
+          return;
+        }
+        callback ( null, json );
+      } else
+        callback ( req, null );
+    }
+  };
+
+  req.open("GET", path, true);
+  req.overrideMimeType("application/json");
+  req.send();
+}
+
+function drawControlPoints(controlPoints) {
+  console.log('controlPoints', JSON.stringify(controlPoints));
 
   controlLayer.selectAll('circle.control').data(controlPoints)
     .enter().append('circle')
@@ -57,20 +85,18 @@ function drawControlPoints() {
       r: 4
     });
 }
-drawControlPoints();
 
 
-function drawRationalBezierCurve() {
+function drawRationalBezierCurve(controlPoints) {
   var i, t;
   var n = 32;
   var curvePoints = [];
-  var curve = new RationalBezierCurve(
-    [controlPoints[0].cx, controlPoints[1].cx, controlPoints[2].cx],
-    [controlPoints[0].cy, controlPoints[1].cy, controlPoints[2].cy],
-    [controlPoints[0].w, controlPoints[1].w, controlPoints[2].w]
-  );
 
-  console.log(curve);
+  var cxArr = controlPoints.map( function(x){return x.cx;} );
+  var cyArr = controlPoints.map( function(x){return x.cy;} );
+  var wArr = controlPoints.map( function(x){return x.w;} );
+
+  var curve = new RationalBezierCurve( cxArr, cyArr, wArr );
 
   for (i = 0; i <= n; i++) {
     t = i / n;
@@ -105,4 +131,3 @@ function drawRationalBezierCurve() {
       y2: function(d) { return d.y2; }
     });
 }
-drawRationalBezierCurve();

@@ -1,20 +1,26 @@
-d3.js-draw-arc-with-rational-bezier-example
+d3.js-draw-rational-bezier-curve
 ===========================================
 
-an example of drawing an arc with a rational bezier curve using d3.js
+**Based on [Hiroaki Nakamura's work](https://github.com/hnakamur/d3.js-draw-arc-with-rational-bezier-example).** Please see his repo for references.
 
-## Demo
-http://hnakamur.github.io/d3.js-draw-arc-with-rational-bezier-example
+You will need:
+* NPM
+* Git client
+* Browser with JS
 
-## References
-
-- [T. W. Sederberg, BYU, Computer Aided Geometric Design Course Notes October 23, 2012]( http://tom.cs.byu.edu/~557/text/cagd.pdf )
-- Detlef Reimers, Drawing Circles with Rational Quadratic Bezier Curves, September 1, 2011 ( ftp://ftp.tex.ac.uk/tex-archive/macros/latex/contrib/lapdf/rcircle.pdf )
-
-## Develop
+Pre-build:
+```
+git clone https://github.com/Marqin/d3.js-draw-rational-bezier-curve.git
+cd d3.js-draw-rational-bezier-curve
+npm install  # installs dependencies
+```
+Build:
 
 * Run ```gulp``` to start the webpack-dev-server and watch source files to be modified.
 * Run ```gulp build``` to build for the production.
 
-## License
-MIT
+Run:
+* ```firefox index.html```
+* ```chrome --allow-file-access-from-files index.html```
+
+**If you use Chrome you need to use --allow-file-access-from-files flag!**
