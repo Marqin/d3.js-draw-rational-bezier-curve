@@ -13,10 +13,28 @@ getJSON ( "data.json", function ( err, json, out ) {
     if ( err )
       console.log("ERROR:", err);
     else {
-      svg.attr(json["svgAttr"]);
-      var controlPoints = json["controlPoints"];
+      var controlPoints = json;
+
+      var cxArr = controlPoints.map( function(x){return x.cx;} );
+      var cyArr = controlPoints.map( function(x){return x.cy;} );
+      var wArr = controlPoints.map( function(x){return x.w;} );
+
+      var minX = Math.min( ...cxArr ),
+        width = Math.abs( Math.max( ...cxArr ) - minX ),
+        minY = Math.min( ...cyArr ),
+        height = Math.abs( Math.max( ...cyArr ) - minY );
+
+      minX -= 5; minY -= 5; width += 10; height += 10;
+
+      // The curve is completely contained in the convex hull of its control points :-)
+      svg.attr({
+        viewBox: minX + " " + minY + " " + width + " " + height,
+        width: 512,
+        height: 512
+      });
+
       drawControlPoints(controlPoints);
-      drawRationalBezierCurve(controlPoints);
+      drawRationalBezierCurve(cxArr, cyArr, wArr);
     }
 });
 
@@ -62,14 +80,11 @@ function drawControlPoints(controlPoints) {
 }
 
 
-function drawRationalBezierCurve(controlPoints) {
+function drawRationalBezierCurve(cxArr, cyArr, wArr) {
   var i, t;
   var n = 32;
   var curvePoints = [];
 
-  var cxArr = controlPoints.map( function(x){return x.cx;} );
-  var cyArr = controlPoints.map( function(x){return x.cy;} );
-  var wArr = controlPoints.map( function(x){return x.w;} );
 
   var curve = new RationalBezierCurve( cxArr, cyArr, wArr );
 
