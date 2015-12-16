@@ -10,6 +10,7 @@ You will need:
 
 Pre-build:
 ```
+npm install -g gulp  # this may need sudo on some distros
 git clone https://github.com/Marqin/d3.js-draw-rational-bezier-curve.git
 cd d3.js-draw-rational-bezier-curve
 npm install  # installs dependencies
